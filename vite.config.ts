@@ -6,6 +6,22 @@ import AutoImport from 'unplugin-auto-import/vite'
 const base = process.env.BASE_PATH || '/'
 const isPreview = process.env.IS_PREVIEW ? true : false;
 
+// Get the current host from environment variable or use pattern
+const getAllowedHosts = () => {
+  const hosts = [
+    'localhost',
+    '.replit.dev',
+    '.repl.co'
+  ];
+  
+  // Add specific host if provided via environment variable
+  if (process.env.REPLIT_HOST) {
+    hosts.push(process.env.REPLIT_HOST);
+  }
+  
+  return hosts;
+};
+
 // https://vite.dev/config/
 export default defineConfig({
   define: {
@@ -79,8 +95,9 @@ export default defineConfig({
   server: {
     port: 3000,
     host: '0.0.0.0',
-    allowedHosts: [
-      '41f1ffa1-479c-4c92-91d0-418e93c367f4-00-34127y96rgotd.sisko.replit.dev'
-    ]
+    allowedHosts: getAllowedHosts(),
+    hmr: {
+      clientPort: 443 // Important for Replit
+    }
   }
 })
